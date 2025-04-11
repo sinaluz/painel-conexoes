@@ -34,10 +34,10 @@
       border: 1px solid #999;
       font-weight: bold;
       color: #000;
-      background-color: #ccffcc; /* verde padrão */
+      background-color: #ccffcc;
     }
     input.x-mark {
-      background-color: #ff4d4d; /* vermelho */
+      background-color: #ff4d4d;
       color: white;
       border: 1px solid #990000;
     }
@@ -62,18 +62,28 @@
       font-weight: bold;
       color: #003366;
     }
+    #limpar-btn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #limpar-btn:hover {
+      background-color: #cc0000;
+    }
   </style>
 </head>
 <body>
   <h1>SWIFT CASA 10</h1>
+
   <table id="painel">
     <thead>
-      <tr>
-        <th></th>
-        <script>
-          document.write('<th colspan="24">Portas</th>');
-        </script>
-      </tr>
+      <tr><th></th><th colspan="24">Portas</th></tr>
       <tr>
         <th></th>
         <script>
@@ -84,73 +94,28 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Linha A -->
-      <tr><td class="row-label">A</td>
-        <script>
+      <!-- Linhas A, B, C, D -->
+      <script>
+        const letras = ['A', 'B', 'C', 'D'];
+        for (let linha of letras) {
+          document.write(`<tr><td class="row-label">${linha}</td>`);
           for (let i = 1; i <= 24; i++) {
-            document.write(`<td><input id="a${i}" oninput="salvar(this)"></td>`);
+            document.write(`<td><input id="${linha.toLowerCase()}${i}" oninput="salvar(this)"></td>`);
           }
-        </script>
-      </tr>
-      <tr><td></td>
-        <script>
-          for (let i = 1; i <= 24; i++) {
-            document.write(`<td class="num-row">${i}</td>`);
-          }
-        </script>
-      </tr>
-
-      <!-- Linha B -->
-      <tr><td class="row-label">B</td>
-        <script>
-          for (let i = 1; i <= 24; i++) {
-            document.write(`<td><input id="b${i}" oninput="salvar(this)"></td>`);
-          }
-        </script>
-      </tr>
-      <tr><td></td>
-        <script>
+          document.write('</tr>');
+          document.write('<tr><td></td>');
           for (let i = 1; i <= 24; i++) {
             document.write(`<td class="num-row">${i}</td>`);
           }
-        </script>
-      </tr>
-
-      <!-- Linha C -->
-      <tr><td class="row-label">C</td>
-        <script>
-          for (let i = 1; i <= 24; i++) {
-            document.write(`<td><input id="c${i}" oninput="salvar(this)"></td>`);
-          }
-        </script>
-      </tr>
-      <tr><td></td>
-        <script>
-          for (let i = 1; i <= 24; i++) {
-            document.write(`<td class="num-row">${i}</td>`);
-          }
-        </script>
-      </tr>
-
-      <!-- Linha D -->
-      <tr><td class="row-label">D</td>
-        <script>
-          for (let i = 1; i <= 24; i++) {
-            document.write(`<td><input id="d${i}" oninput="salvar(this)"></td>`);
-          }
-        </script>
-      </tr>
-      <tr><td></td>
-        <script>
-          for (let i = 1; i <= 24; i++) {
-            document.write(`<td class="num-row">${i}</td>`);
-          }
-        </script>
-      </tr>
+          document.write('</tr>');
+        }
+      </script>
     </tbody>
   </table>
 
   <div id="contador">Conectados: 0 | Desconectados: 0</div>
+
+  <button id="limpar-btn" onclick="limparTudo()">Limpar Tudo</button>
 
   <script>
     function salvar(input) {
@@ -190,12 +155,17 @@
       inputs.forEach(input => {
         if (input.value.trim().toLowerCase() === 'x') {
           desconectados++;
-        } else {
+        } else if (input.value.trim() !== '') {
           conectados++;
         }
       });
       document.getElementById('contador').innerText =
         `Conectados: ${conectados} | Desconectados: ${desconectados}`;
+    }
+
+    function limparTudo() {
+      localStorage.clear();
+      location.reload();
     }
 
     window.onload = carregar;
