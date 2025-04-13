@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,7 +13,24 @@
     h1 {
       text-align: center;
       color: #003366;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
+    }
+    .btn-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .btn-container button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-weight: bold;
+      border-radius: 8px;
+      border: none;
+      background-color: #0077cc;
+      color: white;
+      cursor: pointer;
+    }
+    .btn-container button.active {
+      background-color: #004080;
     }
     table {
       width: 100%;
@@ -62,30 +80,25 @@
       font-weight: bold;
       color: #003366;
     }
-    #limpar-btn {
-      display: block;
-      margin: 30px auto 0;
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #ff4d4d;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #limpar-btn:hover {
-      background-color: #cc0000;
-    }
   </style>
 </head>
 <body>
-  <h1>SWIFT CASA 10</h1>
+  <h1>PAINEL DE CONEXÕES</h1>
+
+  <div class="btn-container">
+    <button onclick="trocarCasa('casa10')" id="btn10" class="active">Casa 10</button>
+    <button onclick="trocarCasa('casa11')" id="btn11">Casa 11</button>
+  </div>
 
   <table id="painel">
     <thead>
-      <tr><th></th><th colspan="24">Portas</th></tr>
       <tr>
         <th></th>
+        <th colspan="24">Portas</th>
+      </tr>
+      <tr>
+        <th></th>
+        <!-- Numerando colunas -->
         <script>
           for (let i = 1; i <= 24; i++) {
             document.write(`<th>${i}</th>`);
@@ -94,13 +107,12 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Linhas A, B, C, D -->
+      <!-- Linhas A a D -->
       <script>
-        const letras = ['A', 'B', 'C', 'D'];
-        for (let linha of letras) {
-          document.write(`<tr><td class="row-label">${linha}</td>`);
+        for (let letra of ['A', 'B', 'C', 'D']) {
+          document.write(`<tr><td class="row-label">${letra}</td>`);
           for (let i = 1; i <= 24; i++) {
-            document.write(`<td><input id="${linha.toLowerCase()}${i}" oninput="salvar(this)"></td>`);
+            document.write(`<td><input id="${letra.toLowerCase()}${i}" oninput="salvar(this)"></td>`);
           }
           document.write('</tr>');
           document.write('<tr><td></td>');
@@ -115,11 +127,11 @@
 
   <div id="contador">Conectados: 0 | Desconectados: 0</div>
 
-  <button id="limpar-btn" onclick="limparTudo()">Limpar Tudo</button>
-
   <script>
+    let casaAtual = 'casa10';
+
     function salvar(input) {
-      localStorage.setItem(input.id, input.value);
+      localStorage.setItem(`${casaAtual}_${input.id}`, input.value);
       aplicarEstiloX(input);
       atualizarContador();
     }
@@ -129,12 +141,10 @@
       for (let letra of letras) {
         for (let i = 1; i <= 24; i++) {
           const id = letra + i;
-          const valor = localStorage.getItem(id);
-          if (valor !== null) {
-            const campo = document.getElementById(id);
-            campo.value = valor;
-            aplicarEstiloX(campo);
-          }
+          const valor = localStorage.getItem(`${casaAtual}_${id}`);
+          const campo = document.getElementById(id);
+          campo.value = valor || '';
+          aplicarEstiloX(campo);
         }
       }
       atualizarContador();
@@ -155,7 +165,7 @@
       inputs.forEach(input => {
         if (input.value.trim().toLowerCase() === 'x') {
           desconectados++;
-        } else if (input.value.trim() !== '') {
+        } else {
           conectados++;
         }
       });
@@ -163,9 +173,14 @@
         `Conectados: ${conectados} | Desconectados: ${desconectados}`;
     }
 
-    function limparTudo() {
-      localStorage.clear();
-      location.reload();
+    function trocarCasa(novaCasa) {
+      casaAtual = novaCasa;
+      carregar();
+
+      // Atualiza botão ativo
+      document.getElementById('btn10').classList.remove('active');
+      document.getElementById('btn11').classList.remove('active');
+      document.getElementById(novaCasa === 'casa10' ? 'btn10' : 'btn11').classList.add('active');
     }
 
     window.onload = carregar;
